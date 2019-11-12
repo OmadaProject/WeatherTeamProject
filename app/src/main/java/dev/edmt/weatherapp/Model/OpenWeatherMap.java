@@ -6,132 +6,132 @@ import java.util.List;
  * Created by reale on 05/10/2016.
  */
 
-public class OpenWeatherMap {
-    private Coord coord;
-    private List<Weather> weather;
-    private String base;
-    private  Main main;
-    private Wind wind;
-    private Rain rain;
-    private Clouds clouds;
-    private int dt;
-    private Sys sys;
-    private int id;
-    private String name;
-    private int cod;
+public class OpenWeatherMap
+{
+  private Coord coord;
+  private List<Weather> weather;
+  private String base;
+  private Main main;
+  private Wind wind;
+  private Rain rain;
+  private Clouds clouds;
+  private long dt;
+  private Sys sys;
+  private int id;
+  private String name;
+  private int cod;
+  
+  public OpenWeatherMap() {}
+  
+  public OpenWeatherMap(Coord coord, List<Weather> weatherList, String base, Main main, Wind wind, Rain rain, Clouds clouds, int dt, Sys sys, int id, String name, int cod)
+  {
+      this.coord = coord;
+      this.weather = weatherList;
+      this.base = base;
+      this.main = main;
+      this.wind = wind;
+      this.rain = rain;
+      this.clouds = clouds;
+      this.dt = dt;
+      this.sys = sys;
+      this.id = id;
+      this.name = name;
+      this.cod = cod;
+  }
+  
+  public Coord getCoord() {
+      return coord;
+  }
+  
+  public void setCoord(Coord coord) {
+      this.coord = coord;
+  }
+  
+  public List<Weather> getWeather() {
+      return weather;
+  }
 
-    public OpenWeatherMap() {
-    }
+  public void setWeather(List<Weather> weather) {
+      this.weather = weather;
+  }
 
-    public OpenWeatherMap(Coord coord, List<Weather> weatherList, String base, Main main, Wind wind, Rain rain, Clouds clouds, int dt, Sys sys, int id, String name, int cod) {
-        this.coord = coord;
-        this.weather = weatherList;
-        this.base = base;
-        this.main = main;
-        this.wind = wind;
-        this.rain = rain;
-        this.clouds = clouds;
-        this.dt = dt;
-        this.sys = sys;
-        this.id = id;
-        this.name = name;
-        this.cod = cod;
-    }
+  public String getBase() {
+      return base;
+  }
 
-    public Coord getCoord() {
-        return coord;
-    }
+  public void setBase(String base) {
+      this.base = base;
+  }
 
-    public void setCoord(Coord coord) {
-        this.coord = coord;
-    }
+  public Main getMain() {
+      return main;
+  }
 
+  public void setMain(Main main) {
+      this.main = main;
+  }
 
-    public List<Weather> getWeather() {
-        return weather;
-    }
+  public Wind getWind() {
+      return wind;
+  }
 
-    public void setWeather(List<Weather> weather) {
-        this.weather = weather;
-    }
+  public void setWind(Wind wind) {
+      this.wind = wind;
+  }
 
-    public String getBase() {
-        return base;
-    }
+  public Rain getRain() {
+      return rain;
+  }
 
-    public void setBase(String base) {
-        this.base = base;
-    }
+  public void setRain(Rain rain) {
+      this.rain = rain;
+  }
 
-    public Main getMain() {
-        return main;
-    }
+  public Clouds getClouds() {
+      return clouds;
+  }
 
-    public void setMain(Main main) {
-        this.main = main;
-    }
+  public void setClouds(Clouds clouds) {
+      this.clouds = clouds;
+  }
 
-    public Wind getWind() {
-        return wind;
-    }
+  public long getDt() {
+      return dt;
+  }
 
-    public void setWind(Wind wind) {
-        this.wind = wind;
-    }
+  public void setDt(long dt) {
+      this.dt = dt;
+  }
 
-    public Rain getRain() {
-        return rain;
-    }
+  public Sys getSys() {
+      return sys;
+  }
 
-    public void setRain(Rain rain) {
-        this.rain = rain;
-    }
+  public void setSys(Sys sys) {
+      this.sys = sys;
+  }
 
-    public Clouds getClouds() {
-        return clouds;
-    }
+  public int getId() {
+      return id;
+  }
 
-    public void setClouds(Clouds clouds) {
-        this.clouds = clouds;
-    }
+  public void setId(int id) {
+      this.id = id;
+  }
 
-    public int getDt() {
-        return dt;
-    }
+  public String getName() {
+      return name;
+  }
 
-    public void setDt(int dt) {
-        this.dt = dt;
-    }
+  public void setName(String name) {
+      this.name = name;
+  }
 
-    public Sys getSys() {
-        return sys;
-    }
+  public int getCod() {
+      return cod;
+  }
 
-    public void setSys(Sys sys) {
-        this.sys = sys;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCod() {
-        return cod;
-    }
-
-    public void setCod(int cod) {
-        this.cod = cod;
+  public void setCod(int cod) {
+      this.cod = cod;
     }
 }

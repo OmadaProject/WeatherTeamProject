@@ -4,7 +4,8 @@ package dev.edmt.weatherapp.Model;
  * Created by reale on 05/10/2016.
  */
 
-public class Sys {
+public class Sys
+{
     private int type;
     private int id;
     private double message;

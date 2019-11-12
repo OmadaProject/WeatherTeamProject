@@ -4,7 +4,8 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-   android:orientation="vertical"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context="dev.edmt.weatherapp.MainActivity">
 
     <TextView
@@ -74,4 +75,18 @@
         android:textSize="30sp"
         android:gravity="center"
         />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:onClick="save"
+        android:text="save weather" />
+
+    <Button
+        android:id="@+id/btn_load"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:onClick="load"
+        android:text="load saved weather" />
 </LinearLayout>
