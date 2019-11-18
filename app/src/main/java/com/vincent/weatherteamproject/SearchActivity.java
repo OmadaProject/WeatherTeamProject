@@ -8,11 +8,14 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class SearchActivity extends AppCompatActivity {
+
+    public static final String TAG = SearchActivity.class.getSimpleName();
 
     private EditText mEditText;
     private Button mButton;
@@ -35,6 +38,14 @@ public class SearchActivity extends AppCompatActivity {
 
         mEditText = findViewById(R.id.textEdit);
         mButton = findViewById(R.id.button);
+
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = mEditText.getText().toString();
+                Log.d(TAG, "the text is " + text);
+            }
+        });
     }
 
 }
