@@ -129,4 +129,15 @@ public class TodayWeatherFragment extends Fragment {
         );
     }
 
+    @Override
+    public void onResume() {
+        getWeatherInformation();
+        super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        compositeDisposable.clear();
+        super.onStop();
+    }
 }
