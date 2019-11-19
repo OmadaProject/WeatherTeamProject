@@ -78,15 +78,23 @@
 
     <Button
         android:id="@+id/btn_save"
+        android:layout_marginTop="20dp"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:onClick="save"
         android:text="save weather" />
-
+    
     <Button
         android:id="@+id/btn_load"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:onClick="load"
         android:text="load saved weather" />
+    
+    <Button
+        android:id="@+id/btn_current"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:onClick="getCurrentWeather"
+        android:text="get current weather" />
 </LinearLayout>

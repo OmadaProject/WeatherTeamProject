@@ -2,6 +2,7 @@ package dev.edmt.weatherapp;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
@@ -19,9 +20,13 @@ import com.squareup.picasso.Picasso;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 
 import dev.edmt.weatherapp.Common.Common;
 import dev.edmt.weatherapp.Helper.Helper;
@@ -31,28 +36,26 @@ public class MainActivity extends AppCompatActivity
 {
 	TextView txtCity, txtLastUpdate, txtDescription, txtHumidity, txtTime, txtCelsius;
 	ImageView imageView;
-	String string;
+	String jsonString, date;
 	int MY_PERMISSION = 0;
 	
 	private static final Type TYPE = new TypeToken<OpenWeatherMap>(){}.getType();
 	private static final String TAG = MainActivity.class.getName();
-	private static final String FILE_NAME = "weather.txt";
-  
+	private static final String FILENAME = "weather_history.txt";
+	
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
-  	string = null;
-  	
 	  // Coordinates of target city (currently Thessaloniki)
 	  final double Lat = 40.736851d;
 	  final double Lng = 22.920227d;
+	
+	  new GetWeather().execute( Common.apiRequest( String.valueOf(Lat),String.valueOf(Lng) ) );
 	  
-	  new GetWeather().execute( Common.apiRequest(String.valueOf(Lat),String.valueOf(Lng)) );
-  	
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-    
-    //Control
+	  super.onCreate(savedInstanceState);
+	  setContentView(R.layout.activity_main);
+	  
+	  jsonString = null;
     txtCity = findViewById(R.id.txtCity);
     txtLastUpdate = findViewById(R.id.txtLastUpdate);
     txtDescription = findViewById(R.id.txtDescription);
@@ -77,14 +80,32 @@ public class MainActivity extends AppCompatActivity
     }
   }
 	
+	public void getCurrentWeather(View v)
+	{
+		// Coordinates of target city (currently Thessaloniki)
+		final double Lat = 40.736851d;
+		final double Lng = 22.920227d;
+		
+		new GetWeather().execute( Common.apiRequest( String.valueOf(Lat),String.valueOf(Lng) ) );
+	}
+	
 	public void save(View v)
 	{
+		Context context = getApplicationContext();
+		String filePath = context.getFilesDir().getPath() + "/" + FILENAME;
+		
+//		NEED TO IMPLEMENT THIS
+		boolean overwrite = checkIfSameDate(filePath);
+		
 		FileOutputStream fos = null;
 		
 		try
 		{
-			fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
-			fos.write( string.getBytes() );
+			StringBuilder stringBuilder = new StringBuilder(jsonString);
+			stringBuilder.append( System.getProperty("line.separator") );
+			
+			fos = new FileOutputStream(filePath, true);
+			fos.write( stringBuilder.toString().getBytes() );
 		}
 		catch (IOException e)
 		{
@@ -97,14 +118,45 @@ public class MainActivity extends AppCompatActivity
 				try
 				{
 					fos.close();
-				} catch (IOException e)
+				}
+				catch (IOException e)
 				{
 					e.printStackTrace();
 				}
 			}
 		}
+	}
+	
+	boolean checkIfSameDate(String filePath)
+	{
+		boolean result = false;
 		
-		Log.i(TAG, "Saved weather");
+		try
+		{
+			BufferedReader br = new BufferedReader( new FileReader(filePath) );
+			String currentLine, lastLine = "";
+			
+			while ( (currentLine = br.readLine() ) != null)
+				lastLine = currentLine;
+			
+			int index = lastLine.indexOf("dt") + 4;
+			Long dt1 = Long.parseLong(lastLine.substring(index, index + 10), 10);
+			
+			index = jsonString.indexOf("dt") + 4;
+			Long dt2 = Long.parseLong(jsonString.substring(index, index + 10), 10);
+			
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+			String date1 = simpleDateFormat.format( new Date(dt1 * 1000L) );
+			String date2 = simpleDateFormat.format( new Date(dt2 * 1000L) );
+			
+			result = Objects.equals(date1, date2);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	public void load(View v)
@@ -113,7 +165,7 @@ public class MainActivity extends AppCompatActivity
 		
 		try
 		{
-			fis = openFileInput(FILE_NAME);
+			fis = openFileInput(FILENAME);
 			InputStreamReader isr = new InputStreamReader(fis);
 			BufferedReader br = new BufferedReader(isr);
 			StringBuilder sb = new StringBuilder();
@@ -124,8 +176,10 @@ public class MainActivity extends AppCompatActivity
 				sb.append(text).append("\n");
 			}
 			
-			string = sb.toString();
-			setViews(string);
+			jsonString = sb.toString();
+			setViews(jsonString);
+			
+			Log.i(TAG, "Loaded weather successfully");
 		}
 		catch (IOException e)
 		{
@@ -145,8 +199,6 @@ public class MainActivity extends AppCompatActivity
 				}
 			}
 		}
-		
-		Log.i(TAG, "Loaded weather");
 	}
 	
   private class GetWeather extends AsyncTask<String,Void,String>
@@ -188,7 +240,7 @@ public class MainActivity extends AppCompatActivity
         return;
       }
       
-      string = s;
+      jsonString = s;
       
       pd.dismiss();
       
@@ -201,10 +253,12 @@ public class MainActivity extends AppCompatActivity
 	  Gson gson = new Gson();
 	  OpenWeatherMap openWeatherMap = gson.fromJson(string, TYPE);
 	  
-//	  pd.dismiss();
+	  txtCity.setText( String.format( "%s,%s",openWeatherMap.getName(),openWeatherMap.getSys().getCountry() ) );
 	  
-	  txtCity.setText(String.format("%s,%s",openWeatherMap.getName(),openWeatherMap.getSys().getCountry()));
-	  txtLastUpdate.setText( String.format("Last Updated: %s", Common.unixTimeStampToDateTime(openWeatherMap.getDt() ) ) );
+	  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+	  date = simpleDateFormat.format( new Date(openWeatherMap.getDt() * 1000L) );
+	  
+	  txtLastUpdate.setText( String.format(date) );
 	  txtDescription.setText(String.format("%s",openWeatherMap.getWeather().get(0).getDescription()));
 	  txtHumidity.setText(String.format("%d%%",openWeatherMap.getMain().getHumidity()));
 	  txtTime.setText(String.format("%s/%s",Common.unixTimeStampToDateTime(openWeatherMap.getSys().getSunrise()),Common.unixTimeStampToDateTime(openWeatherMap.getSys().getSunset())));
