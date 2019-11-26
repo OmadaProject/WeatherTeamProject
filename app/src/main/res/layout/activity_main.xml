@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context="dev.edmt.weatherapp.MainActivity">
-
+    
     <TextView
         android:id="@+id/txtCity"
         android:layout_marginTop="40dp"
@@ -18,7 +18,7 @@
         android:textSize="36sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtLastUpdate"
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         android:textSize="18sp"
         android:gravity="center"
         />
-    
+
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -75,26 +75,73 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_marginTop="20dp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:onClick="save"
-        android:text="save weather" />
     
-    <Button
-        android:id="@+id/btn_load"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:onClick="load"
-        android:text="load saved weather" />
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="30dp" 
+            android:layout_height="wrap_content" >
+            
+            <RadioGroup
+                
+                android:id="@+id/city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                
+                <RadioButton
+                    android:id="@+id/thessaloniki"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableStart="@android:drawable/btn_radio"
+                    android:text="Thessaloniki"
+                    android:onClick="onRadioButtonClicked" />
+                
+                <RadioButton
+                    android:id="@+id/serres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableStart="@android:drawable/btn_radio"
+                    android:text="Serres"
+                    android:onClick="onRadioButtonClicked" />
+            </RadioGroup>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+            
+            <Button
+                android:id="@+id/btn_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="getCurrentWeather"
+                android:text="get current weather" />
     
-    <Button
-        android:id="@+id/btn_current"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:onClick="getCurrentWeather"
-        android:text="get current weather" />
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="save"
+                android:text="save weather" />
+            
+            <Spinner
+                android:id="@+id/dropdown"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
