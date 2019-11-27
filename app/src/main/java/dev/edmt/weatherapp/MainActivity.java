@@ -50,6 +50,10 @@ public class MainActivity extends AppCompatActivity
 	private static final String TAG = MainActivity.class.getName();
 	private static final String THESSALONIKI = "thessaloniki_history.txt";
 	private static final String SERRES = "serres_history.txt";
+	private static final double LAT_THESSALONIKI = 40.640266d;
+	private static final double LON_THESSALONIKI = 22.939524d;
+	private static final double LAT_SERRES = 41.08499d;
+	private static final double LON_SERRES = 23.54757d;
 	
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -89,32 +93,6 @@ public class MainActivity extends AppCompatActivity
 		  }
 	  });
   }
-	
-	public void getCurrentWeather(View v)
-	{
-		if(radioButton == null)
-		{
-			Log.w(TAG, "Select a city to get weather information");
-			return;
-		}
-		
-		double latitude, longitude;
-		
-		if( Objects.equals(radioButton.getText().toString(), "Thessaloniki") )
-		{
-			latitude = 40.640266d;
-			longitude = 22.939524d;
-			
-			new GetWeather().execute( Common.apiRequest( String.valueOf(latitude),String.valueOf(longitude) ) );
-		}
-		else
-		{
-			latitude = 41.08499d;
-			longitude = 23.54757d;
-			
-			new GetWeather().execute( Common.apiRequest( String.valueOf(latitude),String.valueOf(longitude) ) );
-		}
-	}
 	
 	public void save(View v)
 	{
@@ -225,8 +203,11 @@ public class MainActivity extends AppCompatActivity
 		radioButton = findViewById( radioGroup.getCheckedRadioButtonId() );
 		filePath = basePath + (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? THESSALONIKI : SERRES);
 		
-		Spinner dropdown = findViewById(R.id.dropdown);
-		List<String> dates = new ArrayList<>( Arrays.asList("LOAD SAVED WEATHER") );
+		final double LAT = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LAT_THESSALONIKI : LAT_SERRES);
+		final double LON = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LON_THESSALONIKI : LON_SERRES);
+		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT),String.valueOf(LON) ) );
+		
+		List<String> dates = new ArrayList<>( Arrays.asList("LOAD WEATHER") );
 		
 		try
 		{
@@ -251,7 +232,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, dates);
-		dropdown.setAdapter(adapter);
+		spinner.setAdapter(adapter);
 	}
 	
   private class GetWeather extends AsyncTask<String,Void,String>

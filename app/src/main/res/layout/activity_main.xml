@@ -10,7 +10,6 @@
     
     <TextView
         android:id="@+id/txtCity"
-        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
@@ -28,14 +27,14 @@
         android:textSize="18sp"
         android:gravity="center"
         />
-
+    
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/imageView"
         android:layout_gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtDescription"
         android:layout_width="match_parent"
@@ -45,7 +44,7 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtHumidity"
         android:layout_width="match_parent"
@@ -55,7 +54,7 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtTime"
         android:layout_width="match_parent"
@@ -65,7 +64,7 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtCelsius"
         android:layout_width="match_parent"
@@ -77,18 +76,17 @@
         />
     
     <LinearLayout
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
         
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_marginEnd="30dp" 
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp" >
             
             <RadioGroup
-                
                 android:id="@+id/city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -123,13 +121,6 @@
             android:orientation="vertical">
             
             <Button
-                android:id="@+id/btn_current"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="getCurrentWeather"
-                android:text="get current weather" />
-    
-            <Button
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -138,8 +129,9 @@
             
             <Spinner
                 android:id="@+id/dropdown"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginTop="5dp"
                 android:background="@android:drawable/btn_dropdown"
                 android:spinnerMode="dropdown" />
         </LinearLayout>
