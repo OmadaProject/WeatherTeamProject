@@ -1,7 +1,6 @@
 package dev.edmt.weatherapp;
 
 import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -40,10 +40,11 @@ public class MainActivity extends AppCompatActivity
 {
 	TextView txtCity, txtLastUpdate, txtDescription, txtHumidity, txtTime, txtCelsius;
 	Spinner spinner;
+	EditText editText;
 	ImageView imageView;
 	RadioGroup radioGroup;
 	RadioButton radioButton;
-	String jsonString, filePath, basePath, toBeLoaded;
+	String jsonString, filePath, basePath;
 	List<String> jsons;
 	
 	private static final Type TYPE = new TypeToken<OpenWeatherMap>(){}.getType();
@@ -70,10 +71,10 @@ public class MainActivity extends AppCompatActivity
 	  imageView = findViewById(R.id.imageView);
 	  radioGroup = findViewById(R.id.city);
 	  spinner = findViewById(R.id.dropdown);
+	  editText = findViewById(R.id.editTextKeyword);
 	  radioButton = null;
 	  jsonString = null;
 	  filePath = null;
-	  toBeLoaded = null;
 	  basePath = getApplicationContext().getFilesDir().getPath() + "/";
 	  jsons = new ArrayList<>();
 	  
@@ -145,6 +146,17 @@ public class MainActivity extends AppCompatActivity
 		}
 	}
 	
+	public void filter(View v)
+	{
+		if(filePath == null)
+		{
+			Log.w(TAG, "Select a city to load weather history");
+			return;
+		}
+		
+		Log.i( TAG, "Searching \"" + editText.getText().toString() + "\" in weather history for " + radioButton.getText().toString() );
+	}
+	
 	StringBuffer checkIfDateExists()
 	{
 		try
@@ -202,10 +214,9 @@ public class MainActivity extends AppCompatActivity
 	{
 		radioButton = findViewById( radioGroup.getCheckedRadioButtonId() );
 		filePath = basePath + (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? THESSALONIKI : SERRES);
-		
 		final double LAT = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LAT_THESSALONIKI : LAT_SERRES);
 		final double LON = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LON_THESSALONIKI : LON_SERRES);
-		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT),String.valueOf(LON) ) );
+		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT), String.valueOf(LON) ) );
 		
 		List<String> dates = new ArrayList<>( Arrays.asList("LOAD WEATHER") );
 		

@@ -134,6 +134,27 @@
                 android:layout_marginTop="5dp"
                 android:background="@android:drawable/btn_dropdown"
                 android:spinnerMode="dropdown" />
+            
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                
+                <EditText
+                    android:id="@+id/editTextKeyword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:backgroundTint="@android:color/black"
+                    android:hint="rain, clouds, ..."
+                    android:inputType="text" />
+                
+                <Button
+                    android:id="@+id/btnSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="filter"
+                    android:text="filter" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
