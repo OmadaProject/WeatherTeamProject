@@ -1,6 +1,7 @@
 package dev.edmt.weatherapp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,12 +51,14 @@ public class MainActivity extends AppCompatActivity
 	
 	private static final Type TYPE = new TypeToken<OpenWeatherMap>(){}.getType();
 	private static final String TAG = MainActivity.class.getName();
-	private static final String THESSALONIKI = "thessaloniki_history.txt";
-	private static final String SERRES = "serres_history.txt";
-	private static final double LAT_THESSALONIKI = 40.640266d;
-	private static final double LON_THESSALONIKI = 22.939524d;
-	private static final double LAT_SERRES = 41.08499d;
-	private static final double LON_SERRES = 23.54757d;
+	public static final String THESSALONIKI_FILENAME = "thessaloniki_history.txt";
+	public static final String SERRES_FILENAME = "serres_history.txt";
+	public static final String THESSALONIKI_NAME = "thessaloniki";
+	public static final String SERRES_NAME = "serres";
+	public static final double LAT_THESSALONIKI = 40.640266d;
+	public static final double LON_THESSALONIKI = 22.939524d;
+	public static final double LAT_SERRES = 41.08499d;
+	public static final double LON_SERRES = 23.54757d;
 	
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 	  radioButton = null;
 	  jsonString = null;
 	  filePath = null;
-	  basePath = getApplicationContext().getFilesDir().getPath() + "/";
+	  basePath = SaveWeatherService.getBasePath(getApplicationContext());
 	  jsons = new ArrayList<>();
 	  
 	  spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -94,6 +97,10 @@ public class MainActivity extends AppCompatActivity
 			  Log.i(TAG, "onNothingSelected");
 		  }
 	  });
+
+	  // TEST
+	  Intent intent = new Intent(getApplicationContext(), SaveWeatherService.class);
+	  startService(intent);
   }
 	
 	public void save(View v)
@@ -214,10 +221,12 @@ public class MainActivity extends AppCompatActivity
 	public void onRadioButtonClicked(View v)
 	{
 		radioButton = findViewById( radioGroup.getCheckedRadioButtonId() );
-		filePath = basePath + (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? THESSALONIKI : SERRES);
-		final double LAT = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LAT_THESSALONIKI : LAT_SERRES);
-		final double LON = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LON_THESSALONIKI : LON_SERRES);
-		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT), String.valueOf(LON) ) );
+
+		filePath = basePath + (Objects.equals(radioButton.getText().toString(), THESSALONIKI_NAME) ? THESSALONIKI_FILENAME : SERRES_FILENAME);
+		
+		final double LAT = (Objects.equals(radioButton.getText().toString(), THESSALONIKI_NAME) ? LAT_THESSALONIKI : LAT_SERRES);
+		final double LON = (Objects.equals(radioButton.getText().toString(), THESSALONIKI_NAME) ? LON_THESSALONIKI : LON_SERRES);
+		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT),String.valueOf(LON) ) );
 		
 		List<String> dates = new ArrayList<>( Arrays.asList("LOAD WEATHER") );
 		
