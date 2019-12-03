@@ -14,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -245,11 +246,11 @@ public class MainActivity extends AppCompatActivity
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, dates);
 		spinner.setAdapter(adapter);
 	}
-	
+
   private class GetWeather extends AsyncTask<String,Void,String>
   {
     ProgressDialog pd = new ProgressDialog(MainActivity.this);
-    
+
     @Override
     protected void onPreExecute()
     {
@@ -257,35 +258,42 @@ public class MainActivity extends AppCompatActivity
       pd.setTitle("Please wait...");
       pd.show();
     }
-    
+
     @Override
     protected String doInBackground(String... params)
     {
-    	String stream = null;
-      String urlString = params[0];
-      
-	    Helper http = new Helper();
-	    stream = http.getHTTPData(urlString);
-	    
-	    return stream;
+		String stream = null;
+		String urlString = params[0];
+
+		Helper http = new Helper();
+		stream = http.getHTTPData(urlString);
+
+		return stream;
     }
     
     @Override
     protected void onPostExecute(String s)
-    {
-      super.onPostExecute(s);
-      
-      if(s.contains("Error: Not found city"))
-      {
-        pd.dismiss();
-        return;
-      }
-      
-      jsonString = s;
-      
-      pd.dismiss();
-      
-      setViews(s);
+	{
+		super.onPostExecute(s);
+
+		if (s == null) {
+			Log.w(TAG, "Could not get weather data");
+			pd.dismiss();
+			Toast.makeText(getApplicationContext(), R.string.check_network, Toast.LENGTH_SHORT).show();
+
+			return;
+		}
+
+		if (s.contains("Error: Not found city")) {
+			pd.dismiss();
+			return;
+		}
+
+		jsonString = s;
+
+		pd.dismiss();
+
+		setViews(s);
     }
   }
   
