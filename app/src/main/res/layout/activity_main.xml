@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:button="@null"
                     android:drawableStart="@android:drawable/btn_radio"
-                    android:text="Thessaloniki"
+                    android:text="@string/thessaloniki"
                     android:onClick="onRadioButtonClicked" />
                 
                 <RadioButton
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:button="@null"
                     android:drawableStart="@android:drawable/btn_radio"
-                    android:text="Serres"
+                    android:text="@string/serres"
                     android:onClick="onRadioButtonClicked" />
             </RadioGroup>
         </LinearLayout>

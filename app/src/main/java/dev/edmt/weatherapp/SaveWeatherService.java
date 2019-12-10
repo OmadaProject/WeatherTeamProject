@@ -1,11 +1,19 @@
 package dev.edmt.weatherapp;
 
-import android.app.IntentService;
 import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
+
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.Operation;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,39 +23,38 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import dev.edmt.weatherapp.Common.Common;
 import dev.edmt.weatherapp.Helper.Helper;
 
-public class SaveWeatherService extends IntentService {
+public class SaveWeatherService extends Worker {
 
     private static final String[] CITY_NAMES = {MainActivity.THESSALONIKI_NAME, MainActivity.SERRES_NAME};
 
     public static final String TAG = SaveWeatherService.class.getSimpleName();
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public SaveWeatherService(String name) {
-        super(name);
+    public static final String WORK_NAME = "save_weather";
+
+    public SaveWeatherService(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
-    public SaveWeatherService()
-    {
-        super("SaveWeatherService");
-    }
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    public Result doWork() {
+        boolean success = true;
+
         for (String cityName : CITY_NAMES) {
             String weatherJson = loadWeather(getApplicationContext(), cityName);
             if (weatherJson != null) {
-                boolean succes = saveWeather(getApplicationContext(), cityName, weatherJson);
+                success &= saveWeather(getApplicationContext(), cityName, weatherJson);
+            }
+            else {
+                success = false;
             }
         }
 
-        stopSelf();
+        return success ? Result.success() : Result.retry();
     }
 
     public static String getBasePath(Context context) {
@@ -88,6 +95,7 @@ public class SaveWeatherService extends IntentService {
 
     private static boolean saveWeather(@NonNull Context context, @NonNull String cityName,
                                        @NonNull String weatherJson) {
+        boolean success = true;
         String filePath;
 
         if (MainActivity.THESSALONIKI_NAME.equals(cityName)) {
@@ -122,6 +130,7 @@ public class SaveWeatherService extends IntentService {
         }
         catch (IOException e)
         {
+            success = false;
             e.printStackTrace();
         }
         finally
@@ -139,7 +148,7 @@ public class SaveWeatherService extends IntentService {
             }
         }
 
-        return false;
+        return success;
     }
 
     private static StringBuffer checkIfDateExists(@NonNull String filePath,
@@ -187,4 +196,18 @@ public class SaveWeatherService extends IntentService {
 
         return null;
     }
+
+    public static void schedule(@NonNull Context context) {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest saveRequest =
+                new PeriodicWorkRequest.Builder(SaveWeatherService.class, 1, TimeUnit.DAYS)
+                        .setConstraints(constraints)
+                        .build();
+
+        WorkManager.getInstance((context)).enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, saveRequest);
+    }
+
 }

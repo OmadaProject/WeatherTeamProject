@@ -1,6 +1,6 @@
 package dev.edmt.weatherapp.Common;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,7 +16,7 @@ public class Common
     public static String apiRequest(String lat, String lng)
     {
 	    final String API_KEY = "73e774e5e7212dee352ad8e5cf9e2236";
-	    final String API_LINK = "http://api.openweathermap.org/data/2.5/weather";
+	    final String API_LINK = "https://api.openweathermap.org/data/2.5/weather";
     	
       StringBuilder sb = new StringBuilder(API_LINK);
       sb.append(String.format("?lat=%s&lon=%s&APPID=%s&units=metric",lat,lng,API_KEY));

@@ -1,9 +1,7 @@
 package dev.edmt.weatherapp;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +14,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity
 	private static final String TAG = MainActivity.class.getName();
 	public static final String THESSALONIKI_FILENAME = "thessaloniki_history.txt";
 	public static final String SERRES_FILENAME = "serres_history.txt";
-	public static final String THESSALONIKI_NAME = "thessaloniki";
-	public static final String SERRES_NAME = "serres";
+	public static final String THESSALONIKI_NAME = "Thessaloniki";
+	public static final String SERRES_NAME = "Serres";
 	public static final double LAT_THESSALONIKI = 40.640266d;
 	public static final double LON_THESSALONIKI = 22.939524d;
 	public static final double LAT_SERRES = 41.08499d;
@@ -98,9 +98,7 @@ public class MainActivity extends AppCompatActivity
 		  }
 	  });
 
-	  // TEST
-	  Intent intent = new Intent(getApplicationContext(), SaveWeatherService.class);
-	  startService(intent);
+	  SaveWeatherService.schedule(getApplicationContext());
   }
 	
 	public void save(View v)
@@ -220,12 +218,14 @@ public class MainActivity extends AppCompatActivity
 	
 	public void onRadioButtonClicked(View v)
 	{
+		boolean isThessaloniki = v.getId() == R.id.thessaloniki;
+
 		radioButton = findViewById( radioGroup.getCheckedRadioButtonId() );
 
-		filePath = basePath + (Objects.equals(radioButton.getText().toString(), THESSALONIKI_NAME) ? THESSALONIKI_FILENAME : SERRES_FILENAME);
+		filePath = basePath + (isThessaloniki ? THESSALONIKI_FILENAME : SERRES_FILENAME);
 		
-		final double LAT = (Objects.equals(radioButton.getText().toString(), THESSALONIKI_NAME) ? LAT_THESSALONIKI : LAT_SERRES);
-		final double LON = (Objects.equals(radioButton.getText().toString(), THESSALONIKI_NAME) ? LON_THESSALONIKI : LON_SERRES);
+		final double LAT = (isThessaloniki ? LAT_THESSALONIKI : LAT_SERRES);
+		final double LON = (isThessaloniki ? LON_THESSALONIKI : LON_SERRES);
 		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT),String.valueOf(LON) ) );
 		
 		List<String> dates = new ArrayList<>( Arrays.asList("LOAD WEATHER") );
