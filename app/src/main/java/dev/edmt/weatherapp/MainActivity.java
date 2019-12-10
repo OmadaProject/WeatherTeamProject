@@ -2,7 +2,6 @@ package dev.edmt.weatherapp;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +13,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -49,12 +51,14 @@ public class MainActivity extends AppCompatActivity
 	
 	private static final Type TYPE = new TypeToken<OpenWeatherMap>(){}.getType();
 	private static final String TAG = MainActivity.class.getName();
-	private static final String THESSALONIKI = "thessaloniki_history.txt";
-	private static final String SERRES = "serres_history.txt";
-	private static final double LAT_THESSALONIKI = 40.640266d;
-	private static final double LON_THESSALONIKI = 22.939524d;
-	private static final double LAT_SERRES = 41.08499d;
-	private static final double LON_SERRES = 23.54757d;
+	public static final String THESSALONIKI_FILENAME = "thessaloniki_history.txt";
+	public static final String SERRES_FILENAME = "serres_history.txt";
+	public static final String THESSALONIKI_NAME = "Thessaloniki";
+	public static final String SERRES_NAME = "Serres";
+	public static final double LAT_THESSALONIKI = 40.640266d;
+	public static final double LON_THESSALONIKI = 22.939524d;
+	public static final double LAT_SERRES = 41.08499d;
+	public static final double LON_SERRES = 23.54757d;
 	
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 	  radioButton = null;
 	  jsonString = null;
 	  filePath = null;
-	  basePath = getApplicationContext().getFilesDir().getPath() + "/";
+	  basePath = SaveWeatherService.getBasePath(getApplicationContext());
 	  jsons = new ArrayList<>();
 	  
 	  spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -93,6 +97,8 @@ public class MainActivity extends AppCompatActivity
 			  Log.i(TAG, "onNothingSelected");
 		  }
 	  });
+
+	  SaveWeatherService.schedule(getApplicationContext());
   }
 	
 	public void save(View v)
@@ -212,11 +218,15 @@ public class MainActivity extends AppCompatActivity
 	
 	public void onRadioButtonClicked(View v)
 	{
+		boolean isThessaloniki = v.getId() == R.id.thessaloniki;
+
 		radioButton = findViewById( radioGroup.getCheckedRadioButtonId() );
-		filePath = basePath + (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? THESSALONIKI : SERRES);
-		final double LAT = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LAT_THESSALONIKI : LAT_SERRES);
-		final double LON = (Objects.equals(radioButton.getText().toString(), "Thessaloniki") ? LON_THESSALONIKI : LON_SERRES);
-		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT), String.valueOf(LON) ) );
+
+		filePath = basePath + (isThessaloniki ? THESSALONIKI_FILENAME : SERRES_FILENAME);
+		
+		final double LAT = (isThessaloniki ? LAT_THESSALONIKI : LAT_SERRES);
+		final double LON = (isThessaloniki ? LON_THESSALONIKI : LON_SERRES);
+		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT),String.valueOf(LON) ) );
 		
 		List<String> dates = new ArrayList<>( Arrays.asList("LOAD WEATHER") );
 		
@@ -245,11 +255,11 @@ public class MainActivity extends AppCompatActivity
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, dates);
 		spinner.setAdapter(adapter);
 	}
-	
+
   private class GetWeather extends AsyncTask<String,Void,String>
   {
     ProgressDialog pd = new ProgressDialog(MainActivity.this);
-    
+
     @Override
     protected void onPreExecute()
     {
@@ -257,35 +267,42 @@ public class MainActivity extends AppCompatActivity
       pd.setTitle("Please wait...");
       pd.show();
     }
-    
+
     @Override
     protected String doInBackground(String... params)
     {
-    	String stream = null;
-      String urlString = params[0];
-      
-	    Helper http = new Helper();
-	    stream = http.getHTTPData(urlString);
-	    
-	    return stream;
+		String stream = null;
+		String urlString = params[0];
+
+		Helper http = new Helper();
+		stream = http.getHTTPData(urlString);
+
+		return stream;
     }
     
     @Override
     protected void onPostExecute(String s)
-    {
-      super.onPostExecute(s);
-      
-      if(s.contains("Error: Not found city"))
-      {
-        pd.dismiss();
-        return;
-      }
-      
-      jsonString = s;
-      
-      pd.dismiss();
-      
-      setViews(s);
+	{
+		super.onPostExecute(s);
+
+		if (s == null) {
+			Log.w(TAG, "Could not get weather data");
+			pd.dismiss();
+			Toast.makeText(getApplicationContext(), R.string.check_network, Toast.LENGTH_SHORT).show();
+
+			return;
+		}
+
+		if (s.contains("Error: Not found city")) {
+			pd.dismiss();
+			return;
+		}
+
+		jsonString = s;
+
+		pd.dismiss();
+
+		setViews(s);
     }
   }
   
