@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -43,11 +42,15 @@ public class MainActivity extends AppCompatActivity
 	TextView txtCity, txtLastUpdate, txtDescription, txtHumidity, txtTime, txtCelsius;
 	Spinner spinner;
 	EditText editText;
+	EditText minTempEditText;
+	EditText maxTempEditText;
 	ImageView imageView;
 	RadioGroup radioGroup;
 	RadioButton radioButton;
 	String jsonString, filePath, basePath;
 	List<String> jsons;
+	List<String> dates;
+	List<Integer> filterIndexes = null;
 	
 	private static final Type TYPE = new TypeToken<OpenWeatherMap>(){}.getType();
 	private static final String TAG = MainActivity.class.getName();
@@ -59,6 +62,8 @@ public class MainActivity extends AppCompatActivity
 	public static final double LON_THESSALONIKI = 22.939524d;
 	public static final double LAT_SERRES = 41.08499d;
 	public static final double LON_SERRES = 23.54757d;
+
+	private final Gson mGson = new Gson();
 	
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -76,6 +81,8 @@ public class MainActivity extends AppCompatActivity
 	  radioGroup = findViewById(R.id.city);
 	  spinner = findViewById(R.id.dropdown);
 	  editText = findViewById(R.id.editTextKeyword);
+	  minTempEditText = findViewById(R.id.editTextMinTemperature);
+	  maxTempEditText = findViewById(R.id.editTextMaxTemperature);
 	  radioButton = null;
 	  jsonString = null;
 	  filePath = null;
@@ -87,8 +94,18 @@ public class MainActivity extends AppCompatActivity
 		  @Override
 		  public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
 		  {
-			  if(position > 0)
-			    setViews( jsons.get(position - 1) );
+			  if (position == 0) {
+				  return;
+			  }
+
+			  int selectedPosition;
+			  if (filterIndexes != null) {
+				  selectedPosition = filterIndexes.get(position - 1);
+			  } else {
+				  selectedPosition = position - 1;
+			  }
+
+			  setViews(jsons.get(selectedPosition));
 		  }
 		  
 		  @Override
@@ -159,8 +176,70 @@ public class MainActivity extends AppCompatActivity
 			Log.w(TAG, "Select a city to load weather history");
 			return;
 		}
-		
-		Log.i( TAG, "Searching \"" + editText.getText().toString() + "\" in weather history for " + radioButton.getText().toString() );
+
+		String query = editText.getText().toString().trim();
+		String minTempString = minTempEditText.getText().toString().trim();
+		String maxTempString = maxTempEditText.getText().toString().trim();
+		Double minTemp = null;
+		Double maxTemp = null;
+		try {
+			minTemp = Double.parseDouble(minTempString);
+		}
+		catch (Exception ignored) {}
+
+		try {
+			maxTemp = Double.parseDouble(maxTempString);
+		}
+		catch (Exception ignored) {}
+
+
+		Log.i( TAG, "Searching \"" + query + "\" [" + minTemp + " - " + maxTemp + " ] in weather history for " + radioButton.getText().toString() );
+
+		if ((query.isEmpty() && minTemp == null && maxTemp == null)
+				|| jsons == null
+				|| jsons.size() == 0) {
+			filterIndexes = null;
+			updateSpinnerAdapter();
+
+			return;
+		}
+
+		filterIndexes = new ArrayList<>();
+		int index = 0;
+		for (String json : jsons) {
+			boolean shouldInclude = true;
+
+			OpenWeatherMap openWeatherMap = mGson.fromJson(json, TYPE);
+			double temp = openWeatherMap.getMain().getTemp();
+			String mainWeather = openWeatherMap.getWeather().get(0).getMain();
+
+
+			if (shouldInclude && !query.isEmpty()) {
+				if (!query.equalsIgnoreCase(mainWeather)) {
+					shouldInclude = false;
+				}
+			}
+
+			if (shouldInclude && minTemp != null) {
+				if (minTemp > temp) {
+					shouldInclude = false;
+				}
+			}
+
+			if (shouldInclude && maxTemp != null) {
+				if (maxTemp < temp) {
+					shouldInclude = false;
+				}
+			}
+
+			if (shouldInclude) {
+				filterIndexes.add(index);
+			}
+
+			index++;
+		}
+
+		updateSpinnerAdapter();
 	}
 	
 	StringBuffer checkIfDateExists()
@@ -228,7 +307,7 @@ public class MainActivity extends AppCompatActivity
 		final double LON = (isThessaloniki ? LON_THESSALONIKI : LON_SERRES);
 		new GetWeather().execute( Common.apiRequest( String.valueOf(LAT),String.valueOf(LON) ) );
 		
-		List<String> dates = new ArrayList<>( Arrays.asList("LOAD WEATHER") );
+		dates = new ArrayList<>();
 		
 		try
 		{
@@ -251,8 +330,25 @@ public class MainActivity extends AppCompatActivity
 		{
 			e.printStackTrace();
 		}
-		
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, dates);
+
+		updateSpinnerAdapter();
+	}
+
+	private void updateSpinnerAdapter() {
+
+  		List<String> adapterValues = new ArrayList<>();
+		adapterValues.add("LOAD WEATHER");
+
+		if (filterIndexes != null) {
+			for (int filteredIndex : filterIndexes) {
+				adapterValues.add(dates.get(filteredIndex));
+			}
+		}
+		else {
+			adapterValues.addAll(dates);
+		}
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, adapterValues);
 		spinner.setAdapter(adapter);
 	}
 
@@ -308,8 +404,7 @@ public class MainActivity extends AppCompatActivity
   
   public void setViews(String string)
   {
-	  Gson gson = new Gson();
-	  OpenWeatherMap openWeatherMap = gson.fromJson(string, TYPE);
+	  OpenWeatherMap openWeatherMap = mGson.fromJson(string, TYPE);
 	  
 	  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 	  String date = simpleDateFormat.format( new Date(openWeatherMap.getDt() * 1000L) );
