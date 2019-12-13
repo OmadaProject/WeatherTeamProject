@@ -7,10 +7,9 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context="dev.edmt.weatherapp.MainActivity">
-
+    
     <TextView
         android:id="@+id/txtCity"
-        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
@@ -18,7 +17,7 @@
         android:textSize="36sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtLastUpdate"
         android:layout_width="match_parent"
@@ -35,7 +34,7 @@
         android:id="@+id/imageView"
         android:layout_gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtDescription"
         android:layout_width="match_parent"
@@ -45,7 +44,7 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtHumidity"
         android:layout_width="match_parent"
@@ -55,7 +54,7 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtTime"
         android:layout_width="match_parent"
@@ -65,7 +64,7 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
+    
     <TextView
         android:id="@+id/txtCelsius"
         android:layout_width="match_parent"
@@ -75,26 +74,118 @@
         android:textSize="30sp"
         android:gravity="center"
         />
-
-    <Button
-        android:id="@+id/btn_save"
+    
+    <LinearLayout
         android:layout_marginTop="20dp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:onClick="save"
-        android:text="save weather" />
-    
-    <Button
-        android:id="@+id/btn_load"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:onClick="load"
-        android:text="load saved weather" />
-    
-    <Button
-        android:id="@+id/btn_current"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:onClick="getCurrentWeather"
-        android:text="get current weather" />
+        android:gravity="top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp" >
+            
+            <RadioGroup
+                android:id="@+id/city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="vertical">
+                
+                <RadioButton
+                    android:id="@+id/thessaloniki"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableStart="@android:drawable/btn_radio"
+                    android:text="@string/thessaloniki"
+                    android:onClick="onRadioButtonClicked" />
+                
+                <RadioButton
+                    android:id="@+id/serres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableStart="@android:drawable/btn_radio"
+                    android:text="@string/serres"
+                    android:onClick="onRadioButtonClicked" />
+            </RadioGroup>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="right"
+            android:orientation="vertical">
+            
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="save"
+                android:text="save weather" />
+            
+            <Spinner
+                android:id="@+id/dropdown"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginTop="5dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/editTextKeyword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:backgroundTint="@android:color/black"
+            android:hint="rain, clouds, ..."
+            android:inputType="text" />
+
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="10dp" />
+
+        <EditText
+            android:id="@+id/editTextMinTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:backgroundTint="@android:color/black"
+            android:hint="12"
+            android:inputType="text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"/>
+
+        <EditText
+            android:id="@+id/editTextMaxTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:backgroundTint="@android:color/black"
+            android:hint="30"
+            android:inputType="text" />
+
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="10dp" />
+
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="filter"
+            android:text="filter" />
+    </LinearLayout>
 </LinearLayout>
