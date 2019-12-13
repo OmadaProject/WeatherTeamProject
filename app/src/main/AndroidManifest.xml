@@ -20,11 +20,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <service
-            android:name=".SaveWeatherService"
-            android:exported="true" />
+        </activity>5
 
     </application>
 </manifest>
