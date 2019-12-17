@@ -160,7 +160,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:backgroundTint="@android:color/black"
-            android:hint="12"
+            android:hint="°C"
             android:inputType="text" />
 
         <TextView
@@ -174,7 +174,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:backgroundTint="@android:color/black"
-            android:hint="30"
+            android:hint="°C"
             android:inputType="text" />
 
         <Space

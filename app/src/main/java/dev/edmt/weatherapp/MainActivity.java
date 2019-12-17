@@ -1,5 +1,9 @@
 package dev.edmt.weatherapp;
 
+/**
+ * This is the MainActivity classa
+ */
+
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -118,6 +122,7 @@ public class MainActivity extends AppCompatActivity
 	  SaveWeatherService.schedule(getApplicationContext());
   }
 	
+//  Save weather (json) to txt file different for each city
 	public void save(View v)
 	{
 		if(jsonString == null)
@@ -169,6 +174,7 @@ public class MainActivity extends AppCompatActivity
 		}
 	}
 	
+//	Filter jsons from txt file according to keywords and temperature limits
 	public void filter(View v)
 	{
 		if(filePath == null)
@@ -242,6 +248,7 @@ public class MainActivity extends AppCompatActivity
 		updateSpinnerAdapter();
 	}
 	
+//	Checks if there is already saved weather information for today and keeps the more recent one
 	StringBuffer checkIfDateExists()
 	{
 		try
@@ -295,6 +302,7 @@ public class MainActivity extends AppCompatActivity
 		return null;
 	}
 	
+//	Listener function for radio buttons
 	public void onRadioButtonClicked(View v)
 	{
 		boolean isThessaloniki = v.getId() == R.id.thessaloniki;
@@ -333,7 +341,8 @@ public class MainActivity extends AppCompatActivity
 
 		updateSpinnerAdapter();
 	}
-
+	
+//	Define entries in load weather dropdown list
 	private void updateSpinnerAdapter() {
 
   		List<String> adapterValues = new ArrayList<>();
@@ -402,6 +411,7 @@ public class MainActivity extends AppCompatActivity
     }
   }
   
+//  Set text and image views that display weather information
   public void setViews(String string)
   {
 	  OpenWeatherMap openWeatherMap = mGson.fromJson(string, TYPE);

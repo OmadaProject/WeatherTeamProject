@@ -1,10 +1,10 @@
 package dev.edmt.weatherapp.Model;
 
-import java.util.List;
-
 /**
- * Created by reale on 05/10/2016.
+ * This is the OpenWeatherMap class
  */
+
+import java.util.List;
 
 public class OpenWeatherMap
 {

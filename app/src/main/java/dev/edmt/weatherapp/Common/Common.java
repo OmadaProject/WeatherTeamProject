@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by reale on 05/10/2016.
+ * This is the Common class
  */
 
 public class Common

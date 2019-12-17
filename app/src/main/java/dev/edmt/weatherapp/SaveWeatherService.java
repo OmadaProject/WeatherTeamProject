@@ -1,5 +1,9 @@
 package dev.edmt.weatherapp;
 
+/**
+ * This is the SaveWeatherService class
+ */
+
 import android.content.Context;
 
 import androidx.annotation.NonNull;
